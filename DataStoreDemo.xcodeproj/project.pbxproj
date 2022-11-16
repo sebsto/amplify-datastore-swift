@@ -23,8 +23,6 @@
 		0027E6D62917AC89003F43A0 /* podcast-aws-francais.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0027E6D52917AC89003F43A0 /* podcast-aws-francais.jpg */; };
 		0027E6D82917B08F003F43A0 /* EpisodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6D72917B08F003F43A0 /* EpisodeView.swift */; };
 		0027E6DD2917C090003F43A0 /* PodcastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6DC2917C090003F43A0 /* PodcastView.swift */; };
-		0027E6E52917C746003F43A0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6E42917C746003F43A0 /* main.swift */; };
-		0027E6E92917C7B6003F43A0 /* Podcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6C42916FC9C003F43A0 /* Podcast.swift */; };
 		0027E6EB2917CE0C003F43A0 /* podcast.json in Resources */ = {isa = PBXBuildFile; fileRef = 0027E6EA2917CE0C003F43A0 /* podcast.json */; };
 		00998446291FA5D300F5D252 /* CircularLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00998445291FA5D300F5D252 /* CircularLoadingView.swift */; };
 		00D4DD0F29221B2200FD601B /* LoremSwiftum in Frameworks */ = {isa = PBXBuildFile; productRef = 00D4DD0E29221B2200FD601B /* LoremSwiftum */; };
@@ -41,18 +39,6 @@
 		A8995361616BDC483D342836 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = F848D33866B125FD1EB00D51 /* awsconfiguration.json */; };
 		F1E47B0C47DD100BE64D4C26 /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B39FDE4B83B8487E7E0DB40A /* amplifyconfiguration.json */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		0027E6E02917C746003F43A0 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00155730291998C000E361F0 /* DataStoreControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreControlView.swift; sourceTree = "<group>"; };
@@ -73,7 +59,6 @@
 		0027E6D72917B08F003F43A0 /* EpisodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeView.swift; sourceTree = "<group>"; };
 		0027E6DB2917BF84003F43A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0027E6DC2917C090003F43A0 /* PodcastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastView.swift; sourceTree = "<group>"; };
-		0027E6E22917C746003F43A0 /* data */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = data; sourceTree = BUILT_PRODUCTS_DIR; };
 		0027E6E42917C746003F43A0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		0027E6EA2917CE0C003F43A0 /* podcast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = podcast.json; sourceTree = "<group>"; };
 		00998445291FA5D300F5D252 /* CircularLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularLoadingView.swift; sourceTree = "<group>"; };
@@ -127,13 +112,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0027E6DF2917C746003F43A0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -153,7 +131,6 @@
 			isa = PBXGroup;
 			children = (
 				0027E6B12916FC5B003F43A0 /* DataStoreDemo.app */,
-				0027E6E22917C746003F43A0 /* data */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -427,23 +404,6 @@
 			productReference = 0027E6B12916FC5B003F43A0 /* DataStoreDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0027E6E12917C746003F43A0 /* data */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0027E6E62917C746003F43A0 /* Build configuration list for PBXNativeTarget "data" */;
-			buildPhases = (
-				0027E6DE2917C746003F43A0 /* Sources */,
-				0027E6DF2917C746003F43A0 /* Frameworks */,
-				0027E6E02917C746003F43A0 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = data;
-			productName = data;
-			productReference = 0027E6E22917C746003F43A0 /* data */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -455,9 +415,6 @@
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					0027E6B02916FC5B003F43A0 = {
-						CreatedOnToolsVersion = 14.1;
-					};
-					0027E6E12917C746003F43A0 = {
 						CreatedOnToolsVersion = 14.1;
 					};
 				};
@@ -480,7 +437,6 @@
 			projectRoot = "";
 			targets = (
 				0027E6B02916FC5B003F43A0 /* DataStoreDemo */,
-				0027E6E12917C746003F43A0 /* data */,
 			);
 		};
 /* End PBXProject section */
@@ -527,15 +483,6 @@
 				0027E6DD2917C090003F43A0 /* PodcastView.swift in Sources */,
 				0027E6C52916FC9C003F43A0 /* Podcast.swift in Sources */,
 				00E33FC229180632000D464F /* PodcastBridge.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0027E6DE2917C746003F43A0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0027E6E92917C7B6003F43A0 /* Podcast.swift in Sources */,
-				0027E6E52917C746003F43A0 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,32 +659,6 @@
 			};
 			name = Release;
 		};
-		0027E6E72917C746003F43A0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 56U756R2L2;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		0027E6E82917C746003F43A0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 56U756R2L2;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -755,15 +676,6 @@
 			buildConfigurations = (
 				0027E6C02916FC5C003F43A0 /* Debug */,
 				0027E6C12916FC5C003F43A0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0027E6E62917C746003F43A0 /* Build configuration list for PBXNativeTarget "data" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0027E6E72917C746003F43A0 /* Debug */,
-				0027E6E82917C746003F43A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
