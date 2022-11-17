@@ -34,8 +34,8 @@ class Backend {
     public let userData : UserData = UserData()
     
     // declare a cancellable to hold onto the subscription
-    private(set) var episodeSubscription: AnyCancellable? = nil
-    private(set) var podcastSubscription: AnyCancellable? = nil
+    private(set) var episodeSubscription: [String:AnyCancellable] = [:]
+    private(set) var podcastSubscription: [Podcast.Category:AnyCancellable] = [:]
     
     static var shared = Backend()
     private init() {
@@ -46,7 +46,7 @@ class Backend {
             try Amplify.add(plugin: dataStorePlugin)
             try Amplify.add(plugin: AWSAPIPlugin())
             try Amplify.configure()
-            Amplify.Logging.logLevel = .verbose
+//            Amplify.Logging.logLevel = .verbose
             print("Amplify configured with DataStore plugin")
             
         } catch {
@@ -92,16 +92,11 @@ class Backend {
     // when userData.podcast is updated, the GUI refreshes
     func loadPodcastForGUI(for category: Podcast.Category) async -> [Podcast] {
         
-        if let subscription = self.podcastSubscription {
-            subscription.cancel()
-            self.podcastSubscription = nil
-        }
-
         // load podcasts and subscribe to changes
         
         // https://docs.amplify.aws/lib/datastore/real-time/q/platform/ios/#observe-query-results-in-real-time
         let p = PodcastData.keys
-        self.podcastSubscription = Amplify.Publisher.create(
+        self.podcastSubscription[category] = Amplify.Publisher.create(
             Amplify.DataStore.observeQuery(for: PodcastData.self,
                                            where: p.category == PodcastCategoryData(from: category))
         )
@@ -123,7 +118,7 @@ class Backend {
                 for p in querySnapshot.items {
                     result.append(Podcast(from: p))
                 }
-                print(result)
+//                print(result)
                 self.userData.podcast = result
             })
         
@@ -133,16 +128,11 @@ class Backend {
     // load episodes for one podcast and update GUI
     // when userData.podcast is updated, the GUI refreshes
     func loadEpisodesForGUI(for podcast: Podcast) async -> Podcast {
-        
-        if let subscription = self.episodeSubscription {
-            subscription.cancel()
-            self.episodeSubscription = nil
-        }
 
         // load episodes
         let e = EpisodeData.keys
         
-        self.episodeSubscription = Amplify.Publisher.create(
+        self.episodeSubscription[podcast.id] = Amplify.Publisher.create(
             Amplify.DataStore.observeQuery(for: EpisodeData.self,
                                            where: e.podcastDataEpisodesId == podcast.id)
         )
@@ -165,7 +155,7 @@ class Backend {
                 for e in querySnapshot.items {
                     result.append(Podcast.Episode(from: e))
                 }
-                print(result)
+//                print(result)
                 
                 // find the matching podcast in the user data and replace with
                 // a podcast with the updated [Epispde]

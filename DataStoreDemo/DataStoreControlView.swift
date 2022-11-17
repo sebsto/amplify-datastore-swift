@@ -9,9 +9,8 @@ import SwiftUI
 
 struct DataStoreControlView: View {
     
-    @State var synchroEnabled : Bool = false
+    var selectedPodcast : Podcast
     
-    //FiXME: should toggle start/stop sync button enable status based on current synchronization engine status
     var body: some View {
         
         HStack(alignment: .center) {
@@ -20,7 +19,8 @@ struct DataStoreControlView: View {
             Button {
                 print("Add an episode")
                 Task {
-                    try await Backend.shared.mutateEpisodeList(for: Backend.shared.userData.selectedPodcast! )
+                    Backend.shared.userData.selectedPodcast = self.selectedPodcast
+                    let _ = try await Backend.shared.mutateEpisodeList(for: self.selectedPodcast )
                 }
             } label: {
                 Label("Add", systemImage: "plus.circle")
@@ -73,6 +73,8 @@ struct DataStoreControlView_Previews: PreviewProvider {
     
     static var previews: some View {
         
-        DataStoreControlView()
+        let podcast = podcast[0]
+
+        DataStoreControlView(selectedPodcast: podcast)
     }
 }

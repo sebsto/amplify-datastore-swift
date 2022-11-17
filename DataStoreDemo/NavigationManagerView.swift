@@ -128,7 +128,7 @@ struct EpisodeListView: View {
                         }
                         .tint(.red)
                     }
-            }.toolbar { DataStoreControlView() }
+            }.toolbar { DataStoreControlView(selectedPodcast: podcast) }
         }
     }
     
