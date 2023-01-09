@@ -35,7 +35,6 @@ struct PodcastView: View {
 
 struct PodcastView_Previews: PreviewProvider {
     static var previews: some View {
-        let podcast = podcast[0]
-        PodcastView(podcast: podcast)
+        PodcastView(podcast: .mock)
     }
 }

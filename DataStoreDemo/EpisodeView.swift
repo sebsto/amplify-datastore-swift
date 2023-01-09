@@ -65,7 +65,7 @@ struct EpisodeView_Previews: PreviewProvider {
     
     static var previews: some View {
         
-        let podcast = podcast[0]
+        let podcast : Podcast = .mock
         let episode = podcast.episodes![0]
         
         EpisodeView(podcast: podcast, episode: episode)

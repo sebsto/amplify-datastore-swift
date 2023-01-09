@@ -31,7 +31,7 @@ import LoremSwiftum
  */
 class Backend {
     
-    public let userData : UserData = UserData()
+    public let userData : UserData = .shared
     
     // declare a cancellable to hold onto the subscription
     private(set) var episodeSubscription: [String:AnyCancellable] = [:]
@@ -235,7 +235,7 @@ class Backend {
         
         // import local JSON data to the backend
         
-        for p in DataStoreDemo.podcast {
+        for p in [Podcast].mock {
             print("Handling podcast : \(p.name)")
             do {
                 let podcastData = PodcastData(from: p)
@@ -253,7 +253,7 @@ class Backend {
     func importEpisode() async throws {
         // import local JSON data to the backend
         
-        for p in DataStoreDemo.podcast {
+        for p in [Podcast].mock {
             print("Handling podcast : \(p.name)")
             let podcastID = p.id
             

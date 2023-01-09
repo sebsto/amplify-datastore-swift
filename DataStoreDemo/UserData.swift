@@ -8,15 +8,19 @@
 import Combine
 import SwiftUI
 
+//@MainActor
 final class UserData: ObservableObject {
     @Published var podcast : [Podcast] = []
     @Published var selectedPodcast : Podcast?
     
-    init() {}
+    static private(set) var shared = UserData()
     
-    init(podcastList: [Podcast], selectedPodcast: Podcast) {
-        self.podcast = podcastList
-        self.selectedPodcast = selectedPodcast
+    private init() {}
+    
+    static func shared(podcastList: [Podcast], selectedPodcast: Podcast) -> UserData {
+        shared.podcast = podcastList
+        shared.selectedPodcast = selectedPodcast
+        return shared
     }
     
     func clear() {

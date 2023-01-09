@@ -164,9 +164,8 @@ struct NavigationManagerView_Previews: PreviewProvider {
     static var previews: some View {
         
         // variable podcast is loaded from JSON, just for previews
-        //        let userData = UserData()
-        let userData = UserData(podcastList: podcast, selectedPodcast: podcast[0])
-        //        let userData = UserData(podcastList: [], selectedPodcast: podcast[0])
+        let userData = UserData.shared(podcastList: .mock,
+                                selectedPodcast: .mock)
         NavigationManagerView().environmentObject(userData)
     }
 }

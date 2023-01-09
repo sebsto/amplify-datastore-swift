@@ -72,9 +72,6 @@ struct VerticalLabelStyle: LabelStyle {
 struct DataStoreControlView_Previews: PreviewProvider {
     
     static var previews: some View {
-        
-        let podcast = podcast[0]
-
-        DataStoreControlView(selectedPodcast: podcast)
+        DataStoreControlView(selectedPodcast: .mock)
     }
 }
