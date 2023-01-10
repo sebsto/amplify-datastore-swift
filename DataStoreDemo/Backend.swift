@@ -46,7 +46,7 @@ class Backend {
             try Amplify.add(plugin: dataStorePlugin)
             try Amplify.add(plugin: AWSAPIPlugin())
             try Amplify.configure()
-//            Amplify.Logging.logLevel = .verbose
+            Amplify.Logging.logLevel = .verbose
             print("Amplify configured with DataStore plugin")
             
         } catch {

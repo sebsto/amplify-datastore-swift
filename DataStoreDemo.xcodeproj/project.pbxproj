@@ -31,13 +31,13 @@
 		00E33FBE2918029B000D464F /* AWSDataStorePlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 00E33FBD2918029B000D464F /* AWSDataStorePlugin */; };
 		00E33FC02918029B000D464F /* Amplify in Frameworks */ = {isa = PBXBuildFile; productRef = 00E33FBF2918029B000D464F /* Amplify */; };
 		00E33FC229180632000D464F /* PodcastBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC129180632000D464F /* PodcastBridge.swift */; };
-		00E33FC929181409000D464F /* EpisodeData+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC329181409000D464F /* EpisodeData+Schema.swift */; };
-		00E33FCA29181409000D464F /* EpisodeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC429181409000D464F /* EpisodeData.swift */; };
-		00E33FCB29181409000D464F /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC529181409000D464F /* AmplifyModels.swift */; };
-		00E33FCC29181409000D464F /* PodcastData+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC629181409000D464F /* PodcastData+Schema.swift */; };
-		00E33FCD29181409000D464F /* PodcastCategoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC729181409000D464F /* PodcastCategoryData.swift */; };
-		00E33FCE29181409000D464F /* PodcastData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E33FC829181409000D464F /* PodcastData.swift */; };
+		08B84A19895E6848DB1C9FFF /* PodcastData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D754BC48A2DAE7F503FA0AFD /* PodcastData.swift */; };
+		1E92CD264BC6F81FB89CDE61 /* EpisodeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E60C4F04F2EAD3E861ED58 /* EpisodeData.swift */; };
+		2D4F3CC9FD1ACB5F9391185D /* PodcastCategoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44BE85CB2218382E697458E /* PodcastCategoryData.swift */; };
+		3E51AA3EC79833BE6A9F3D6A /* EpisodeData+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524E169FB3D5FD639064E8E /* EpisodeData+Schema.swift */; };
+		404E2680185D2DE36C8AB41D /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817D05441D4110845D1AC378 /* AmplifyModels.swift */; };
 		A8995361616BDC483D342836 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = F848D33866B125FD1EB00D51 /* awsconfiguration.json */; };
+		D30DBB715E6DFFBF7DEC2C44 /* PodcastData+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162D6732FC226B6CACAF68F /* PodcastData+Schema.swift */; };
 		F1E47B0C47DD100BE64D4C26 /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B39FDE4B83B8487E7E0DB40A /* amplifyconfiguration.json */; };
 /* End PBXBuildFile section */
 
@@ -91,13 +91,13 @@
 		00B1FA722917FE3800DBBAB3 /* pre-push.js.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pre-push.js.sample"; sourceTree = "<group>"; };
 		00B1FA732917FE3800DBBAB3 /* team-provider-info.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "team-provider-info.json"; sourceTree = "<group>"; };
 		00E33FC129180632000D464F /* PodcastBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastBridge.swift; sourceTree = "<group>"; };
-		00E33FC329181409000D464F /* EpisodeData+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EpisodeData+Schema.swift"; path = "amplify/generated/models/EpisodeData+Schema.swift"; sourceTree = "<group>"; };
-		00E33FC429181409000D464F /* EpisodeData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EpisodeData.swift; path = amplify/generated/models/EpisodeData.swift; sourceTree = "<group>"; };
-		00E33FC529181409000D464F /* AmplifyModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
-		00E33FC629181409000D464F /* PodcastData+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "PodcastData+Schema.swift"; path = "amplify/generated/models/PodcastData+Schema.swift"; sourceTree = "<group>"; };
-		00E33FC729181409000D464F /* PodcastCategoryData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PodcastCategoryData.swift; path = amplify/generated/models/PodcastCategoryData.swift; sourceTree = "<group>"; };
-		00E33FC829181409000D464F /* PodcastData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PodcastData.swift; path = amplify/generated/models/PodcastData.swift; sourceTree = "<group>"; };
+		0524E169FB3D5FD639064E8E /* EpisodeData+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = "EpisodeData+Schema.swift"; path = "amplify/generated/models/EpisodeData+Schema.swift"; sourceTree = "<group>"; };
+		817D05441D4110845D1AC378 /* AmplifyModels.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
+		9162D6732FC226B6CACAF68F /* PodcastData+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = "PodcastData+Schema.swift"; path = "amplify/generated/models/PodcastData+Schema.swift"; sourceTree = "<group>"; };
+		A44BE85CB2218382E697458E /* PodcastCategoryData.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = PodcastCategoryData.swift; path = amplify/generated/models/PodcastCategoryData.swift; sourceTree = "<group>"; };
 		B39FDE4B83B8487E7E0DB40A /* amplifyconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
+		D2E60C4F04F2EAD3E861ED58 /* EpisodeData.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = EpisodeData.swift; path = amplify/generated/models/EpisodeData.swift; sourceTree = "<group>"; };
+		D754BC48A2DAE7F503FA0AFD /* PodcastData.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = PodcastData.swift; path = amplify/generated/models/PodcastData.swift; sourceTree = "<group>"; };
 		F848D33866B125FD1EB00D51 /* awsconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -352,12 +352,12 @@
 		6CF390B12E9AEC644708EF82 /* AmplifyModels */ = {
 			isa = PBXGroup;
 			children = (
-				00E33FC529181409000D464F /* AmplifyModels.swift */,
-				00E33FC429181409000D464F /* EpisodeData.swift */,
-				00E33FC329181409000D464F /* EpisodeData+Schema.swift */,
-				00E33FC729181409000D464F /* PodcastCategoryData.swift */,
-				00E33FC829181409000D464F /* PodcastData.swift */,
-				00E33FC629181409000D464F /* PodcastData+Schema.swift */,
+				817D05441D4110845D1AC378 /* AmplifyModels.swift */,
+				0524E169FB3D5FD639064E8E /* EpisodeData+Schema.swift */,
+				D2E60C4F04F2EAD3E861ED58 /* EpisodeData.swift */,
+				A44BE85CB2218382E697458E /* PodcastCategoryData.swift */,
+				9162D6732FC226B6CACAF68F /* PodcastData+Schema.swift */,
+				D754BC48A2DAE7F503FA0AFD /* PodcastData.swift */,
 			);
 			name = AmplifyModels;
 			sourceTree = "<group>";
@@ -460,23 +460,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E33FCB29181409000D464F /* AmplifyModels.swift in Sources */,
 				0027E6B72916FC5B003F43A0 /* NavigationManagerView.swift in Sources */,
 				00998446291FA5D300F5D252 /* CircularLoadingView.swift in Sources */,
 				0023E48329183D1E002979A7 /* UserData.swift in Sources */,
-				00E33FCD29181409000D464F /* PodcastCategoryData.swift in Sources */,
 				00155731291998C000E361F0 /* DataStoreControlView.swift in Sources */,
-				00E33FCC29181409000D464F /* PodcastData+Schema.swift in Sources */,
 				0054052B296C475700A0DFCF /* PodcastMock.swift in Sources */,
 				0027E6B52916FC5B003F43A0 /* DataStoreDemoApp.swift in Sources */,
-				00E33FC929181409000D464F /* EpisodeData+Schema.swift in Sources */,
-				00E33FCE29181409000D464F /* PodcastData.swift in Sources */,
 				0027E6C32916FC80003F43A0 /* Backend.swift in Sources */,
-				00E33FCA29181409000D464F /* EpisodeData.swift in Sources */,
 				0027E6D82917B08F003F43A0 /* EpisodeView.swift in Sources */,
 				0027E6DD2917C090003F43A0 /* PodcastView.swift in Sources */,
 				0027E6C52916FC9C003F43A0 /* Podcast.swift in Sources */,
 				00E33FC229180632000D464F /* PodcastBridge.swift in Sources */,
+				404E2680185D2DE36C8AB41D /* AmplifyModels.swift in Sources */,
+				3E51AA3EC79833BE6A9F3D6A /* EpisodeData+Schema.swift in Sources */,
+				1E92CD264BC6F81FB89CDE61 /* EpisodeData.swift in Sources */,
+				2D4F3CC9FD1ACB5F9391185D /* PodcastCategoryData.swift in Sources */,
+				D30DBB715E6DFFBF7DEC2C44 /* PodcastData+Schema.swift in Sources */,
+				08B84A19895E6848DB1C9FFF /* PodcastData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

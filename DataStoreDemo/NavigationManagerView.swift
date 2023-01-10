@@ -22,22 +22,22 @@ struct NavigationManagerView: View {
             
         } content: {
             if let spc = selectedPodcastCategory {
-                
+
                 if let podcast = userData.podcast.filter { item in
                     item.category == selectedPodcastCategory
                 },
                 podcast.count > 0 {
-                    
+
                     PodcastListView(podcast: podcast, selectedPodcast: $selectedPodcast)
-                    
+
                 } else {
-                    
+
                     NoDataView(message: "Loading podcasts...") {
                         // this will update userdata
                         _ = await Backend.shared.loadPodcastForGUI(for: spc)
                     }
                 }
-                
+
             } else {
                 Text("Please select a podcast category")
             }
@@ -45,14 +45,14 @@ struct NavigationManagerView: View {
             
             // browse userData to force GUI refresh when it changes
             if let sp = userData.podcast.first { p in p.id == selectedPodcast?.id } {
-                
+
                 if let episodes = sp.episodes,
                    episodes.count > 0 {
-                    
+
                     EpisodeListView(podcast: sp)
-                    
+
                 } else {
-                    
+
                     NoDataView(message: "Loading episodes...") {
                         _ = await Backend.shared.loadEpisodesForGUI(for: sp)
                         self.userData.selectedPodcast = sp
@@ -62,15 +62,16 @@ struct NavigationManagerView: View {
                 Text("Please select an item")
             }
         }
-        //        .onAppear() {
-        //            print("on appear")
-        //            Task {
-        //
-        //                // I used this to import the podcast
-        //                try await Backend.shared.importPodcast()
-        //                try await Backend.shared.importEpisode()
-        //            }
-        //        }
+//        .onAppear() {
+//            print("on appear")
+//            Task {
+//
+//                // I used this to import the podcast
+//                try await Backend.shared.clearLocalData()
+//                try await Backend.shared.importPodcast()
+//                try await Backend.shared.importEpisode()
+//            }
+//        }
         //        .environmentObject(userData)
         
     }
