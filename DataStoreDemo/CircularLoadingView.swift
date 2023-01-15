@@ -57,9 +57,16 @@ struct CircularProgressView: View {
 
 struct CircularProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        CircularProgressView(strokeWidth : 40, text: "Loading...")
-//            .animate()
-            .padding()
-        
+        VStack(spacing: 100) {
+            Spacer()
+            HStack(spacing: 100) {
+                Spacer()
+                CircularProgressView(strokeWidth : 20, text: "Loading...")
+                //            .animate()
+                    .padding()
+                Spacer()
+            }
+            Spacer()
+        }
     }
 }

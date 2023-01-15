@@ -38,10 +38,12 @@ GraphQL structure
  ```
  */
 
-struct Podcast: Identifiable, Hashable, Codable {
+struct Podcast: Identifiable, Hashable, Equatable, Codable {
+    
+    typealias ID = String
     
     enum Category: String, Identifiable, Hashable, CaseIterable, Codable {
-        var id: String { rawValue }
+        var id: ID { rawValue }
         var name: String { rawValue.localizedCapitalized }
         var icon: Image {
             switch self {
@@ -55,21 +57,37 @@ struct Podcast: Identifiable, Hashable, Codable {
         case technology
     }
 
-    struct Episode: Identifiable, Hashable, Codable {
-        let id: String
+    struct Episode: Identifiable, Hashable, Equatable, Codable {
+        let id: ID
         let date: String
         let title: String
         let duration: String
         let description: String?
     }
 
-    let id: String
+    let id: ID
     let name: String
     let category: Category
     let author: String
     let rating: Int?
     let image: String?
-    var episodes: [Episode]?
+    var episodes: [Episode] = []
+    
+    // copy constructor
+    init(from podcast:Podcast) {
+        id = podcast.id
+        name = podcast.name
+        category = podcast.category
+        author = podcast.author
+        rating = podcast.rating
+        image = podcast.image
+        // shallow copy
+        episodes = podcast.episodes
+    }
+    
+    func description() -> String {
+        return "\(id) - \(name)"
+    }
 }
 
 final class ImageStore {

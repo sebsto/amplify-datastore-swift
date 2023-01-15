@@ -22,11 +22,15 @@ extension PodcastData {
   public static let schema = defineSchema { model in
     let podcastData = PodcastData.keys
     
-    model.listPluralName = "PodcastData"
     model.syncPluralName = "PodcastData"
+    model.listPluralName = "PodcastData"
 
+    model.attributes(
+      .primaryKey(fields: [podcastData.id])
+    )
+    
     model.fields(
-      .id(),
+      .field(podcastData.id, is: .required, ofType: .string),
       .field(podcastData.name, is: .required, ofType: .string),
       .field(podcastData.category, is: .required, ofType: .enum(type: PodcastCategoryData.self)),
       .field(podcastData.author, is: .required, ofType: .string),
@@ -37,4 +41,9 @@ extension PodcastData {
       .field(podcastData.updatedAt, is: .optional, isReadOnly: true, ofType: .dateTime)
     )
     }
+}
+
+extension PodcastData: ModelIdentifiable {
+  public typealias IdentifierFormat = ModelIdentifierFormat.Default
+  public typealias IdentifierProtocol = DefaultModelIdentifier<Self>
 }

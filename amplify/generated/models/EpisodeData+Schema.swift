@@ -21,11 +21,15 @@ extension EpisodeData {
   public static let schema = defineSchema { model in
     let episodeData = EpisodeData.keys
     
-    model.listPluralName = "EpisodeData"
     model.syncPluralName = "EpisodeData"
+    model.listPluralName = "EpisodeData"
 
+    model.attributes(
+      .primaryKey(fields: [episodeData.id])
+    )
+    
     model.fields(
-      .id(),
+      .field(episodeData.id, is: .required, ofType: .string),
       .field(episodeData.date, is: .required, ofType: .string),
       .field(episodeData.title, is: .required, ofType: .string),
       .field(episodeData.duration, is: .required, ofType: .string),
@@ -35,4 +39,9 @@ extension EpisodeData {
       .field(episodeData.podcastDataEpisodesId, is: .optional, ofType: .string)
     )
     }
+}
+
+extension EpisodeData: ModelIdentifiable {
+  public typealias IdentifierFormat = ModelIdentifierFormat.Default
+  public typealias IdentifierProtocol = DefaultModelIdentifier<Self>
 }

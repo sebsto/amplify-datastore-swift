@@ -9,55 +9,46 @@ import SwiftUI
 
 struct DataStoreControlView: View {
     
-    var selectedPodcast : Podcast
+    @EnvironmentObject private var viewModel: ViewModel
+    var selectedPodcast : Podcast?
     
     var body: some View {
         
         HStack(alignment: .center) {
             
             Spacer()
-            Button {
-                print("Add an episode")
-                Task {
-                    Backend.shared.userData.selectedPodcast = self.selectedPodcast
-                    let _ = try await Backend.shared.mutateEpisodeList(for: self.selectedPodcast )
+            button(text: "Add", image: "plus.circle", help: "Add an episode") {
+                if let selectedPodcast {
+                    viewModel.addEpisode(for: selectedPodcast)
                 }
-            } label: {
-                Label("Add", systemImage: "plus.circle")
-//                    .labelStyle(VerticalLabelStyle())
             }
-            .help("Add an episode")
             
             Spacer()
-            Button {
-                print("Reload all data")
-                Task {
-                    Backend.shared.userData.clear()
-                    // the NavigationView triggers the reload
-                    //try await Backend.shared.loadPodcastForGUI(for: .cloud)
-                }
-            } label: {
-                Label("Reload", systemImage: "arrow.triangle.2.circlepath.circle")
-//                    .labelStyle(VerticalLabelStyle())
+            button(text: "Reload", image: "arrow.triangle.2.circlepath.circle", help: "Reload all data") {
+                viewModel.reload()
             }
-            .help("Reload all data")
+
             
             Spacer()
-            Button {
-                print("Remove local data")
-                Task {
-                    try await Backend.shared.clearLocalData()
-                }
-            } label: {
-                Label("Empty", systemImage: "trash")
-//                    .labelStyle(VerticalLabelStyle())
+            button(text: "Empty", image: "trash", help: "Remove local data") {
+                viewModel.clearLocalData()
             }
-            .help("Remove local data")
             
             Spacer()
         }
         .frame(width: nil, height: 80)
         //        .border(.red)
+    }
+    
+    @ViewBuilder
+    func button(text: String, image : String, help: String, action : @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Label(text, systemImage: image)
+//                    .labelStyle(VerticalLabelStyle())
+        }
+        .help(help)
     }
 }
 
@@ -73,5 +64,6 @@ struct DataStoreControlView_Previews: PreviewProvider {
     
     static var previews: some View {
         DataStoreControlView(selectedPodcast: .mock)
+            .environmentObject(ViewModel())
     }
 }

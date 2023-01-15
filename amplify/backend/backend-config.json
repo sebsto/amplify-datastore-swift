@@ -1,22 +1,22 @@
 {
   "api": {
     "datastoredemo": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "authenticationType": "API_KEY",
             "apiKeyConfig": {
+              "apiKeyExpirationDate": "2024-01-10T16:58:02.514Z",
               "apiKeyExpirationDays": 365,
-              "apiKeyExpirationDate": "2023-11-06T14:34:50.013Z",
-              "description": "demo"
-            }
-          },
-          "additionalAuthenticationProviders": []
+              "description": "datastoredemo"
+            },
+            "authenticationType": "API_KEY"
+          }
         }
-      }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
     }
   }
 }

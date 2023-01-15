@@ -9,16 +9,18 @@ import SwiftUI
 
 struct EpisodeView: View {
 
-    let podcast : Podcast
+    let podcast : Podcast?
     let episode : Podcast.Episode
 
     var body: some View {
 
         HStack(alignment: .center, spacing: 10) {
-            ImageStore.shared.image(name: podcast.image!)
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(5)
+            if let img = podcast?.image {
+                ImageStore.shared.image(name: img)
+                    .resizable()
+                    .scaledToFit()
+                    .cornerRadius(5)
+            }
 
             VStack(alignment:.leading) {
                 Text(episode.date)
@@ -66,7 +68,7 @@ struct EpisodeView_Previews: PreviewProvider {
     static var previews: some View {
         
         let podcast : Podcast = .mock
-        let episode = podcast.episodes![0]
+        let episode = podcast.episodes[0]
         
         EpisodeView(podcast: podcast, episode: episode)
     }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00155731291998C000E361F0 /* DataStoreControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00155730291998C000E361F0 /* DataStoreControlView.swift */; };
-		0023E48329183D1E002979A7 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0023E48229183D1E002979A7 /* UserData.swift */; };
+		0023E48329183D1E002979A7 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0023E48229183D1E002979A7 /* ViewModel.swift */; };
 		0027E6B52916FC5B003F43A0 /* DataStoreDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6B42916FC5B003F43A0 /* DataStoreDemoApp.swift */; };
 		0027E6B72916FC5B003F43A0 /* NavigationManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0027E6B62916FC5B003F43A0 /* NavigationManagerView.swift */; };
 		0027E6B92916FC5C003F43A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0027E6B82916FC5C003F43A0 /* Assets.xcassets */; };
@@ -26,6 +26,8 @@
 		0027E6EB2917CE0C003F43A0 /* podcast.json in Resources */ = {isa = PBXBuildFile; fileRef = 0027E6EA2917CE0C003F43A0 /* podcast.json */; };
 		0054052B296C475700A0DFCF /* PodcastMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054052A296C475700A0DFCF /* PodcastMock.swift */; };
 		00998446291FA5D300F5D252 /* CircularLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00998445291FA5D300F5D252 /* CircularLoadingView.swift */; };
+		00AF75422971887D00EAA14E /* guillaume-meurice.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 00AF75412971887D00EAA14E /* guillaume-meurice.jpg */; };
+		00CB081629701BBD004F0DD5 /* DelayedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CB081529701BBD004F0DD5 /* DelayedView.swift */; };
 		00D4DD0F29221B2200FD601B /* LoremSwiftum in Frameworks */ = {isa = PBXBuildFile; productRef = 00D4DD0E29221B2200FD601B /* LoremSwiftum */; };
 		00E33FBC2918029B000D464F /* AWSAPIPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 00E33FBB2918029B000D464F /* AWSAPIPlugin */; };
 		00E33FBE2918029B000D464F /* AWSDataStorePlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 00E33FBD2918029B000D464F /* AWSDataStorePlugin */; };
@@ -43,7 +45,7 @@
 
 /* Begin PBXFileReference section */
 		00155730291998C000E361F0 /* DataStoreControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreControlView.swift; sourceTree = "<group>"; };
-		0023E48229183D1E002979A7 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		0023E48229183D1E002979A7 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		0027E6B12916FC5B003F43A0 /* DataStoreDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataStoreDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0027E6B42916FC5B003F43A0 /* DataStoreDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreDemoApp.swift; sourceTree = "<group>"; };
 		0027E6B62916FC5B003F43A0 /* NavigationManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationManagerView.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 		0027E6EA2917CE0C003F43A0 /* podcast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = podcast.json; sourceTree = "<group>"; };
 		0054052A296C475700A0DFCF /* PodcastMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastMock.swift; sourceTree = "<group>"; };
 		00998445291FA5D300F5D252 /* CircularLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularLoadingView.swift; sourceTree = "<group>"; };
+		00AF75412971887D00EAA14E /* guillaume-meurice.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "guillaume-meurice.jpg"; sourceTree = "<group>"; };
 		00B1FA492917FE3700DBBAB3 /* project-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "project-config.json"; sourceTree = "<group>"; };
 		00B1FA4A2917FE3700DBBAB3 /* local-aws-info.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "local-aws-info.json"; sourceTree = "<group>"; };
 		00B1FA4B2917FE3700DBBAB3 /* local-env-info.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "local-env-info.json"; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 		00B1FA712917FE3800DBBAB3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		00B1FA722917FE3800DBBAB3 /* pre-push.js.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pre-push.js.sample"; sourceTree = "<group>"; };
 		00B1FA732917FE3800DBBAB3 /* team-provider-info.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "team-provider-info.json"; sourceTree = "<group>"; };
+		00CB081529701BBD004F0DD5 /* DelayedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelayedView.swift; sourceTree = "<group>"; };
 		00E33FC129180632000D464F /* PodcastBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastBridge.swift; sourceTree = "<group>"; };
 		00E33FC329181409000D464F /* EpisodeData+Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EpisodeData+Schema.swift"; path = "amplify/generated/models/EpisodeData+Schema.swift"; sourceTree = "<group>"; };
 		00E33FC429181409000D464F /* EpisodeData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EpisodeData.swift; path = amplify/generated/models/EpisodeData.swift; sourceTree = "<group>"; };
@@ -149,7 +153,8 @@
 				00998445291FA5D300F5D252 /* CircularLoadingView.swift */,
 				0027E6C42916FC9C003F43A0 /* Podcast.swift */,
 				0054052A296C475700A0DFCF /* PodcastMock.swift */,
-				0023E48229183D1E002979A7 /* UserData.swift */,
+				0023E48229183D1E002979A7 /* ViewModel.swift */,
+				00CB081529701BBD004F0DD5 /* DelayedView.swift */,
 				00E33FC129180632000D464F /* PodcastBridge.swift */,
 				0027E6B82916FC5C003F43A0 /* Assets.xcassets */,
 				0027E6BA2916FC5C003F43A0 /* Preview Content */,
@@ -174,6 +179,7 @@
 				0027E6C729172413003F43A0 /* les-technos.jpg */,
 				0027E6D52917AC89003F43A0 /* podcast-aws-francais.jpg */,
 				0027E6CC29172414003F43A0 /* podcast-aws.jpg */,
+				00AF75412971887D00EAA14E /* guillaume-meurice.jpg */,
 				0027E6CB29172414003F43A0 /* underscore.jpg */,
 			);
 			path = Resources;
@@ -447,6 +453,7 @@
 				0027E6D62917AC89003F43A0 /* podcast-aws-francais.jpg in Resources */,
 				0027E6D229172414003F43A0 /* podcast-aws.jpg in Resources */,
 				0027E6B92916FC5C003F43A0 /* Assets.xcassets in Resources */,
+				00AF75422971887D00EAA14E /* guillaume-meurice.jpg in Resources */,
 				0027E6D129172414003F43A0 /* underscore.jpg in Resources */,
 				A8995361616BDC483D342836 /* awsconfiguration.json in Resources */,
 				F1E47B0C47DD100BE64D4C26 /* amplifyconfiguration.json in Resources */,
@@ -463,7 +470,7 @@
 				00E33FCB29181409000D464F /* AmplifyModels.swift in Sources */,
 				0027E6B72916FC5B003F43A0 /* NavigationManagerView.swift in Sources */,
 				00998446291FA5D300F5D252 /* CircularLoadingView.swift in Sources */,
-				0023E48329183D1E002979A7 /* UserData.swift in Sources */,
+				0023E48329183D1E002979A7 /* ViewModel.swift in Sources */,
 				00E33FCD29181409000D464F /* PodcastCategoryData.swift in Sources */,
 				00155731291998C000E361F0 /* DataStoreControlView.swift in Sources */,
 				00E33FCC29181409000D464F /* PodcastData+Schema.swift in Sources */,
@@ -475,6 +482,7 @@
 				00E33FCA29181409000D464F /* EpisodeData.swift in Sources */,
 				0027E6D82917B08F003F43A0 /* EpisodeView.swift in Sources */,
 				0027E6DD2917C090003F43A0 /* PodcastView.swift in Sources */,
+				00CB081629701BBD004F0DD5 /* DelayedView.swift in Sources */,
 				0027E6C52916FC9C003F43A0 /* Podcast.swift in Sources */,
 				00E33FC229180632000D464F /* PodcastBridge.swift in Sources */,
 			);
@@ -689,8 +697,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/aws-amplify/amplify-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

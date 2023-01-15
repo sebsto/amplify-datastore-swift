@@ -9,80 +9,90 @@ import SwiftUI
 
 
 struct NavigationManagerView: View {
-    @State private var sideBarVisibility: NavigationSplitViewVisibility = .doubleColumn
-    @State private var selectedPodcastCategory: Podcast.Category? = .cloud
-    @State private var selectedPodcast : Podcast?
     
-    @EnvironmentObject private var userData: UserData
+    private let viewLoadDelay = 1.0
+    
+    @State private var sideBarVisibility: NavigationSplitViewVisibility = .automatic
+    @State private var selectedPodcast : Podcast? = nil
+    @State private var selectedCategory : Podcast.Category? = .cloud
+    
+    @EnvironmentObject private var viewModel: ViewModel
     
     var body: some View {
-        NavigationSplitView(columnVisibility: $sideBarVisibility) {
+        NavigationSplitView(columnVisibility: $sideBarVisibility,
+        
+        sidebar: {
             
-            PodcastCategoryView(category: Backend.shared.podcastCategories(), selectedCategory: $selectedPodcastCategory)
+            categoryView(for: $selectedCategory)
             
-        } content: {
-            if let spc = selectedPodcastCategory {
-                
-                if let podcast = userData.podcast.filter { item in
-                    item.category == selectedPodcastCategory
-                },
-                podcast.count > 0 {
+        }, content: {
+
+            if let category = selectedCategory {
+                switch(viewModel.podcastState[category]) {
+                case .none, .noData:
                     
-                    PodcastListView(podcast: podcast, selectedPodcast: $selectedPodcast)
+                    noDataView(with: "No podcast loaded")
+//                        .delayAppearance(bySeconds: viewLoadDelay)
+                        .task {
+                            await viewModel.loadPodcasts(for: category)
+                        }
+
                     
-                } else {
+                case .loading:
+                    noDataView(with: "Loading podcasts...")
+//                        .delayAppearance(bySeconds: viewLoadDelay)
+
+                case .dataAvailable(let podcasts):
+                    podcastListView(for: podcasts, with: $selectedPodcast)
                     
-                    NoDataView(message: "Loading podcasts...") {
-                        // this will update userdata
-                        _ = await Backend.shared.loadPodcastForGUI(for: spc)
-                    }
-                }
-                
-            } else {
-                Text("Please select a podcast category")
-            }
-        } detail: {
-            
-            // browse userData to force GUI refresh when it changes
-            if let sp = userData.podcast.first { p in p.id == selectedPodcast?.id } {
-                
-                if let episodes = sp.episodes,
-                   episodes.count > 0 {
-                    
-                    EpisodeListView(podcast: sp)
-                    
-                } else {
-                    
-                    NoDataView(message: "Loading episodes...") {
-                        _ = await Backend.shared.loadEpisodesForGUI(for: sp)
-                        self.userData.selectedPodcast = sp
-                    }
+                case .error(let error):
+                    Text("There was an error: \(error.localizedDescription)")
                 }
             } else {
-                Text("Please select an item")
+                Text("No Category selected")
             }
-        }
-        //        .onAppear() {
-        //            print("on appear")
-        //            Task {
-        //
-        //                // I used this to import the podcast
-        //                try await Backend.shared.importPodcast()
-        //                try await Backend.shared.importEpisode()
-        //            }
-        //        }
-        //        .environmentObject(userData)
+
+        }, detail: {
+            
+            if let podcast = selectedPodcast {
+                switch(viewModel.episodeState[podcast.id]) {
+                case .none,  .noData:
+                    noDataView(with: "No episode data")
+//                        .delayAppearance(bySeconds: viewLoadDelay)
+                        .task {
+                            await viewModel.loadEpisodes(for: podcast)
+                        }
+                    
+                case .loading:
+                    noDataView(with: "Loading episodes...")
+//                        .delayAppearance(bySeconds: viewLoadDelay)
+
+                case .dataAvailable(let episodes):
+                    episodeListView(with: episodes, for: selectedPodcast)
+                    
+                case .error(let error):
+                    Text("There was an error: \(error.localizedDescription)")
+                }
+            } else {
+                Text("no podcast selected")
+            }
+        })
+//        .onAppear() {
+//            print("on appear")
+//            Task {
+//                // I used this to import the podcast
+//                try await Backend.shared.clearLocalData()
+//                try await Backend.shared.importPodcast()
+//                try await Backend.shared.importEpisode()
+//            }
+//        }
         
     }
     
-}
-
-struct PodcastCategoryView: View {
-    let category : [Podcast.Category]
-    let selectedCategory : Binding<Podcast.Category?>
-    
-    var body: some View {
-        List(category, selection: selectedCategory) { item in
+    @ViewBuilder
+    func categoryView(for selectedCategory: Binding<Podcast.Category?>) -> some View {
+//        print(self.viewModel.selectedPodcast)
+        List(self.viewModel.podcastCategories(), selection: selectedCategory) { item in
             HStack(spacing: 10) {
                 item.icon
                     .resizable()
@@ -97,13 +107,10 @@ struct PodcastCategoryView: View {
         }
         .navigationTitle("Podcast 🎙🎧 Categories")
     }
-}
-
-struct PodcastListView: View {
-    let podcast : [Podcast]
-    let selectedPodcast : Binding<Podcast?>
     
-    var body: some View {
+    @ViewBuilder
+    func podcastListView(for podcast: [Podcast], with selectedPodcast: Binding<Podcast?>) -> some View {
+//        print(self.viewModel.selectedCategory)
         VStack {
             List(podcast, selection: selectedPodcast) { podcast in
                 NavigationLink(value: podcast) {
@@ -113,17 +120,14 @@ struct PodcastListView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-}
-
-struct EpisodeListView: View {
-    let podcast : Podcast
     
-    var body: some View {
+    @ViewBuilder
+    func episodeListView(with episodes : [Podcast.Episode],for podcast: Podcast?) -> some View {
         VStack {
-            List(podcast.episodes!) { episode in
+            List(episodes) { episode in
                 EpisodeView(podcast: podcast, episode: episode)
                     .swipeActions(edge: .trailing) {
-                        Button (action: { self.deleteEpisode(episode) }) {
+                        Button (action: { viewModel.deleteEpisode(episode) }) {
                             Label("Delete", systemImage: "trash")
                         }
                         .tint(.red)
@@ -131,41 +135,26 @@ struct EpisodeListView: View {
             }.toolbar { DataStoreControlView(selectedPodcast: podcast) }
         }
     }
-    
-    private func deleteEpisode(_ episode : Podcast.Episode) {
-        guard episode.id.count > 7 else {
-            print("let's not delete built-in episodes")
-            return
+    @ViewBuilder
+    func noDataView(with message: String) -> some View {
+//        CircularProgressView(strokeWidth: 20, text: message)
+        VStack(spacing: 50) {
+            ProgressView()
+            Text(message)
         }
-        
-        //call backend on background to delete episode and refresh UI
-        Task {
-            await Backend.shared.deleteEpisode(episode: episode)
-        }
-    }
-}
-
-struct NoDataView: View {
-    let message : String
-    let perform : () async -> Void
-    
-    var body: some View {
-        CircularProgressView(strokeWidth: 20, text: message)
-            .frame(width:200, height:200)
-            .onAppear() {
-                Task {
-                    await perform()
-                }
-            }
+//        .background(.red)
+        .frame(width:200, height:200)
     }
 }
 
 struct NavigationManagerView_Previews: PreviewProvider {
+
     static var previews: some View {
         
+        // TODO create a proper ViewModel mock
+        
         // variable podcast is loaded from JSON, just for previews
-        let userData = UserData.shared(podcastList: .mock,
-                                selectedPodcast: .mock)
-        NavigationManagerView().environmentObject(userData)
+        //NavigationManagerView(podcast: viewModel.podcasts)
+        NavigationManagerView().noDataView(with: "Loading podcast episodes")
     }
 }
