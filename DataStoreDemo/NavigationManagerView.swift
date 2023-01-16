@@ -127,7 +127,7 @@ struct NavigationManagerView: View {
             List(episodes) { episode in
                 EpisodeView(podcast: podcast, episode: episode)
                     .swipeActions(edge: .trailing) {
-                        Button (action: { viewModel.deleteEpisode(episode) }) {
+                        Button (action: { viewModel.deleteEpisode(episode, of: podcast) }) {
                             Label("Delete", systemImage: "trash")
                         }
                         .tint(.red)

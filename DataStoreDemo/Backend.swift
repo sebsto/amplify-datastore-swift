@@ -11,9 +11,6 @@ import Amplify
 import AWSDataStorePlugin
 import AWSAPIPlugin
 
-// to generate random text
-import LoremSwiftum
-
 /**
  
  I used amplify overrides to set the TTL on delta table to one week.
@@ -50,7 +47,11 @@ class Backend {
             print("Failed to initialize Amplify with \(error)")
         }
 
-        listenAmplifyDataStoreEvent()
+//        listenAmplifyDataStoreEvent()
+    }
+    
+    deinit {
+        print("Backend de-allocated")
     }
     
     func listenAmplifyDataStoreEvent() {
@@ -87,7 +88,9 @@ class Backend {
     
     // load podcast from local store and subscribe to changes
     // this allows to start with an empty store and received sync data as the local store is updated
-    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
+//    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
+    //TODO: add error in callback
+    func loadPodcast(for category: Podcast.Category, callback: @escaping ([PodcastData]) -> Void) {
 
         print("====== [BACKEND] LOAD PODCAST")
 
@@ -97,38 +100,31 @@ class Backend {
             s.cancel()
         }
 
+        //TODO:
         // transform callback-based code to async/await stream
         // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
-        return AsyncThrowingStream { continuation in
 
-            // load podcasts and subscribe to changes
-            // https://docs.amplify.aws/lib/datastore/real-time/q/platform/ios/#observe-query-results-in-real-time
-            let p = PodcastData.keys
-            self.podcastSubscription[category] = Amplify.Publisher.create(
-                Amplify.DataStore.observeQuery(for: PodcastData.self,
-                                               where: p.category == PodcastCategoryData(from: category))
-            )
+        // load podcasts and subscribe to changes
+        // https://docs.amplify.aws/lib/datastore/real-time/q/platform/ios/#observe-query-results-in-real-time
+        let p = PodcastData.keys
+        self.podcastSubscription[category] = Amplify.Publisher.create(
+            Amplify.DataStore.observeQuery(for: PodcastData.self,
+                                           where: p.category == PodcastCategoryData(from: category))
+        )
 
-            .sink(
+        // this runs on the main thread because it updates the GUI
+        .receive(on: DispatchQueue.main)
+        .sink(
                 receiveCompletion: { completion in
                     if case let .failure(error) = completion {
-                        print("Subscription received error - \(error)")
-                        continuation.finish(throwing: error)
+                        print("[Podcast snapshot] Subscription received error - \(error)")
                     }
-                    print("====== [Podcast snapshot] received completion")
+                    print("[Podcast snapshot] received completion")
                 },
                 receiveValue: { querySnapshot in
-                    print("====== [Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                    //                //wait for podcast to be loaded from the network (isSynced == true)
-                    //                guard querySnapshot.isSynced == true else { return }
-                    continuation.yield(querySnapshot.items)
+                    print("[Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
+                    callback(querySnapshot.items)
                 })
-
-            continuation.onTermination = { @Sendable _ in
-                print("===== Terminated =====")
-                self.podcastSubscription[category]?.cancel()
-            }
-        }
     }
 
 //    func loadPodcast(for category: Podcast.Category) async throws -> [PodcastData] {
@@ -148,7 +144,10 @@ class Backend {
 //    }
     
 //    // load episodes from local store and subscribe for updates when backend is updated
-    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
+//    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
+    //TODO: add error in callback
+    func loadEpisodes(for podcast: Podcast, callback: @escaping ([EpisodeData]) -> Void) {
+
 
         print("====== [BACKEND] LOAD EPISODES for podcast \(podcast)")
 
@@ -158,95 +157,65 @@ class Backend {
             s.cancel()
         }
 
+        //TODO:
         // transform callback-based code to async/await stream
         // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
-        return AsyncThrowingStream { continuation in
 
-            // load episodes
-            let e = EpisodeData.keys
+        // load episodes
+        let e = EpisodeData.keys
 
-            self.episodeSubscription[podcast.id] = Amplify.Publisher.create(
-                Amplify.DataStore.observeQuery(for: EpisodeData.self,
-                                               where: e.podcastDataEpisodesId == podcast.id)
-            )
+        self.episodeSubscription[podcast.id] = Amplify.Publisher.create(
+            Amplify.DataStore.observeQuery(for: EpisodeData.self,
+                                           where: e.podcastDataEpisodesId == podcast.id)
+        )
 
-            // this runs on the main thread because it updates the GUI
-            //.receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        print("[Episode snapshot] Subscription received error - \(error)")
-                        continuation.finish(throwing: error)
-                    }
-                    print("[Episode snapshot] received completion")
-                },
-                receiveValue: { querySnapshot in
-                    print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                    //                //wait for episodes to be loaded from the network (isSynced == true)
-                    //guard querySnapshot.isSynced == true else { return }
-                    continuation.yield(querySnapshot.items)
-
-                })
-            continuation.onTermination = { @Sendable _ in
-                print("===== Terminated =====")
-                self.episodeSubscription[podcast.id]?.cancel()
-            }
-
-        }
+        // this runs on the main thread because it updates the GUI
+        .receive(on: DispatchQueue.main)
+        .sink(
+            receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    print("[Episode snapshot] Subscription received error - \(error)")
+                }
+                print("[Episode snapshot] received completion")
+            },
+            receiveValue: { querySnapshot in
+                print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
+                callback(querySnapshot.items)
+            })
     }
     
-    func mutateEpisodeList(for podcast: Podcast) async throws -> Podcast {
-        
-        let now = Date()
-        let hour = Calendar.current.component(.hour, from: now)
-        let min = Calendar.current.component(.minute, from: now)
-        let sec = Calendar.current.component(.second, from: now)
-        let newEpisode = Podcast.Episode(id: UUID().uuidString,
-                                         date: Date().formatted(date: .abbreviated, time: .omitted),
-                                         title: "[NEW] \(Lorem.words(3))",
-                                         duration: "\(hour):\(min):\(sec)",
-                                         description: "\(Lorem.paragraph)")
+    func addEpisode(_ episode: EpisodeData) async throws  {
         
         do {
-            print("Adding episode \(newEpisode.title)")
-            var episodeData = EpisodeData(from: newEpisode)
-            episodeData.podcastDataEpisodesId = podcast.id
-            try await Amplify.DataStore.save(episodeData)
-            print("Created a new episode successfully")
+            print("[BACKEND] Adding episode \(episode.title)")
+            try await Amplify.DataStore.save(episode)
+            print("[BACKEND] Created a new episode successfully")
         } catch let error as DataStoreError {
-            print("Error creating podcast - \(error)")
+            print("[BACKEND] Error creating podcast - \(error)")
         } catch {
-            print("Unexpected error \(error)")
+            print("[BACKEND] Unexpected error \(error)")
         }
-        
-        return podcast
     }
     
-    func deleteEpisode(episode: Podcast.Episode) async {
+    func deleteEpisode(episode: EpisodeData) async {
         
         do {
             // https://docs.amplify.aws/lib/datastore/data-access/q/platform/ios/#delete
             
-            // we don't have a full EpisodePodcastData here, just an Podcast.Episode.
-            // so I am using the delete with ID
-            print("Deleteing episode \(episode.title)")
+            print("[BACKEND] Deleting episode \(episode.id)")
             try await Amplify.DataStore.delete(EpisodeData.self, withId: episode.id)
-            print("Deleting was succesful")
-            
-            // the local cache will be refreshed automatically
-            // this will trigger the reload of the UI
+            print("[BACKEND] Deleting was succesful")
             
         } catch let error as DataStoreError {
-            print("Error deleting episode - \(error)")
+            print("[BACKEND] Error deleting episode - \(error)")
         } catch {
-            print("Unexpected error \(error)")
+            print("[BACKEND] Unexpected error \(error)")
         }
         
     }
     
-    //MARK: methods to call the datastore
+    //MARK: methods to manipulate the datastore
     
-    @MainActor
     func clearLocalData() async throws {
         try await Amplify.DataStore.clear()
     }

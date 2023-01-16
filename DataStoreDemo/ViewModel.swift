@@ -5,8 +5,11 @@
 //  Created by Stormacq, Sebastien on 06/11/2022.
 //
 
-import Combine
+//import Combine
 import SwiftUI
+
+// to generate random text when creating episodes
+import LoremSwiftum
 
 @MainActor
 final class ViewModel: ObservableObject {
@@ -31,10 +34,8 @@ final class ViewModel: ObservableObject {
             do {
                 self.podcastState[category] = .loading
                 
-                
-//                let podcastData = try await Backend.shared.loadPodcast(for: category)
-                for try await podcastData in backend.loadPodcast(for: category) {
-                    print("===== podcast subscription yielded new \(podcastData.count) values")
+                self.backend.loadPodcast(for: category) { podcastData in
+                    print("===== podcast callback yielded new \(podcastData.count) values")
                     
                     var result : [Podcast] = []
                     // convert backend data to UI data
@@ -44,10 +45,6 @@ final class ViewModel: ObservableObject {
                     self.podcastState[category] = .dataAvailable(result)
                 }
                 
-//                print("===== Exited podcast loop with state \(self.podcastState[category])")
-                if case .loading = self.podcastState[category]  {
-                    self.podcastState[category] = .noData
-                }
             } catch {
                 podcastState[category] = .error(error)
             }
@@ -61,8 +58,7 @@ final class ViewModel: ObservableObject {
             episodeState[podcast.id] = . loading
             
             // load episodes from backend
-//                let episodeData = try await Backend.shared.loadEpisodes(for: podcast)
-            for try await episodeData in backend.loadEpisodes(for: podcast) {
+            self.backend.loadEpisodes(for: podcast) { episodeData in
                 print("===== episode subscription yielded new \(episodeData.count) values")
 
                 // create an array of Podcast.Episode
@@ -72,14 +68,13 @@ final class ViewModel: ObservableObject {
                 }
 
                 // refresh the view if the update is for the currently selected podcast
-                    self.episodeState[podcast.id] = .dataAvailable(result)
+                self.episodeState[podcast.id] = .dataAvailable(result)
             }
             print("===== Exited episode loop")
 
         } catch {
             episodeState[podcast.id] = .error(error)
         }
-
     }
     
     func podcastCategories() -> [Podcast.Category] {
@@ -100,28 +95,65 @@ final class ViewModel: ObservableObject {
     }
     
     func addEpisode(for podcast:Podcast) {
-        print("Add episode")
-        // TODO
-//        if let pod = selectedPodcast {
-//            let _ = try await Backend.shared.mutateEpisodeList(for: pod )
-//        }
+        print("Going to add episode")
         
-        // + update datavailable
-
+        let now = Date()
+        let hour = Calendar.current.component(.hour, from: now)
+        let min = Calendar.current.component(.minute, from: now)
+        let sec = Calendar.current.component(.second, from: now)
+        let newEpisode = Podcast.Episode(id: UUID().uuidString,
+                                         date: Date().formatted(date: .abbreviated, time: .omitted),
+                                         title: "[NEW] \(Lorem.words(3))",
+                                         duration: "\(hour):\(min):\(sec)",
+                                         description: "\(Lorem.paragraph)")
+        Task {
+            do {
+                print("Adding episode \(newEpisode.title)")
+                var episodeData = EpisodeData(from: newEpisode)
+                episodeData.podcastDataEpisodesId = podcast.id
+                try await self.backend.addEpisode(episodeData)
+                print("Created a new episode successfully")
+                
+                // mutate our model to refresh the view
+                if case var .dataAvailable(episodes) = episodeState[podcast.id] {
+                    episodes.append(newEpisode)
+                    episodeState[podcast.id] = .dataAvailable(episodes)
+                }
+                
+            } catch  {
+                print("Error creating episode - \(error)")
+            }
+        }
     }
     
-    func deleteEpisode(_ episode : Podcast.Episode) {
+    func deleteEpisode(_ episode : Podcast.Episode, of podcast: Podcast?) {
+
+        print("Going to delete episode")
+        
+        guard let p = podcast else {
+            print("Can not delete episode \(episode.id) for NIL podcast")
+            return
+        }
+        
         guard episode.id.count > 7 else {
             print("let's not delete built-in episodes")
             return
         }
         
-        //call backend on background to delete episode and refresh UI
-        Task {
-            await backend.deleteEpisode(episode: episode)
+        if case var .dataAvailable(episodes) = episodeState[p.id] {
+            //call backend on background to delete episode and refresh UI
+            Task.detached(priority: .background) {
+                let episodeData = EpisodeData(from: episode)
+                await self.backend.deleteEpisode(episode: episodeData)
+            }
+
+            // delete episode from our model
+            episodes.removeAll(where: { e in e.id == episode.id })
+            episodeState[p.id] = .dataAvailable(episodes)
+            
+        } else {
+            print("Can not find list of episodes for podcast id \(p.id)")
         }
-        
-        //TODO update .dataAvailable
     }
     
     static func mock() -> ViewModel {
