@@ -85,7 +85,7 @@ class Backend {
     // load podcast from local store and subscribe to changes
     // this allows to start with an empty store and received sync data as the local store is updated
 //    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
-    func loadPodcast(for category: Podcast.Category, callback: @escaping (Result<[PodcastData],Error>) -> Void) {
+    func loadPodcast(for category: Podcast.Category, callback: @MainActor @escaping (Result<[PodcastData],Error>) -> Void) {
 
         print("[BACKEND] LOAD PODCAST")
         
@@ -108,18 +108,26 @@ class Backend {
         )
 
         // this runs on the main thread because it updates the GUI
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .sink(
                 receiveCompletion: { completion in
                     if case let .failure(error) = completion {
                         print("[Podcast snapshot] Subscription received error - \(error)")
-                        callback(Result.failure(error))
+
+                        // run on the main thread because it updates the UI
+                        Task {
+                            await callback(Result.failure(error))
+                        }
                     }
                     print("[Podcast snapshot] received completion")
                 },
                 receiveValue: { querySnapshot in
                     print("[Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                    callback(Result.success(querySnapshot.items))
+
+                    // run on the main thread because it updates the UI
+                    Task {
+                        await callback(Result.success(querySnapshot.items))
+                    }
                 })
     }
 
@@ -141,7 +149,7 @@ class Backend {
     
 //    // load episodes from local store and subscribe for updates when backend is updated
 //    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
-    func loadEpisodes(for podcast: Podcast, callback: @escaping (Result<[EpisodeData],Error>) -> Void) {
+    func loadEpisodes(for podcast: Podcast, callback: @MainActor @escaping (Result<[EpisodeData],Error>) -> Void) {
 
 
         print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
@@ -164,19 +172,25 @@ class Backend {
                                            where: e.podcastDataEpisodesId == podcast.id)
         )
 
-        // this runs on the main thread because it updates the GUI
-        .receive(on: DispatchQueue.main)
         .sink(
             receiveCompletion: { completion in
                 if case let .failure(error) = completion {
                     print("[Episode snapshot] Subscription received error - \(error)")
-                    callback(Result.failure(error))
+                    
+                    // run on the main thread because it updates the UI
+                    Task {
+                        await callback(Result.failure(error))
+                    }
                 }
                 print("[Episode snapshot] received completion")
             },
             receiveValue: { querySnapshot in
                 print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                callback(Result.success(querySnapshot.items))
+
+                // run on the main thread because it updates the UI
+                Task {
+                    await callback(Result.success(querySnapshot.items))
+                }
             })
     }
     
