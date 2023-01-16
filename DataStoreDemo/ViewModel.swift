@@ -30,12 +30,13 @@ final class ViewModel: ObservableObject {
     func loadPodcasts(for category: Podcast.Category) async {
 
         // when we did not load podcast for this category yet
-            print("====== loading podcast for \(category)")
-            do {
-                self.podcastState[category] = .loading
-                
-                self.backend.loadPodcast(for: category) { podcastData in
-                    print("===== podcast callback yielded new \(podcastData.count) values")
+            print("Loading podcast for \(category)")
+            self.podcastState[category] = .loading
+            
+            self.backend.loadPodcast(for: category) { result in
+                switch(result) {
+                case .success(let podcastData):
+                    print("Podcast callback yielded new \(podcastData.count) values")
                     
                     var result : [Podcast] = []
                     // convert backend data to UI data
@@ -43,37 +44,37 @@ final class ViewModel: ObservableObject {
                         result.append(Podcast(from: pd))
                     }
                     self.podcastState[category] = .dataAvailable(result)
+                case .failure(let error):
+                    self.podcastState[category] = .error(error)
                 }
-                
-            } catch {
-                podcastState[category] = .error(error)
             }
+
     }
   
     func loadEpisodes(for podcast: Podcast) async  {
         
-        print("====== loading episodes for \(podcast)")
+        print("Loading episodes for \(podcast.id)")
                     
-        do {
-            episodeState[podcast.id] = . loading
+        episodeState[podcast.id] = . loading
             
-            // load episodes from backend
-            self.backend.loadEpisodes(for: podcast) { episodeData in
-                print("===== episode subscription yielded new \(episodeData.count) values")
-
+        // load episodes from backend
+        self.backend.loadEpisodes(for: podcast) { result in
+            switch(result) {
+            case .success(let episodeData):
+                print("Episode callback yielded new \(episodeData.count) values")
+                
                 // create an array of Podcast.Episode
                 var result : [Podcast.Episode] = []
                 for e in episodeData {
                     result.append(Podcast.Episode(from: e))
                 }
-
+                
                 // refresh the view if the update is for the currently selected podcast
                 self.episodeState[podcast.id] = .dataAvailable(result)
+            case .failure(let error):
+                self.episodeState[podcast.id] = .error(error)
+                
             }
-            print("===== Exited episode loop")
-
-        } catch {
-            episodeState[podcast.id] = .error(error)
         }
     }
     

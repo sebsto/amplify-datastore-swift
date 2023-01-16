@@ -47,11 +47,7 @@ class Backend {
             print("Failed to initialize Amplify with \(error)")
         }
 
-//        listenAmplifyDataStoreEvent()
-    }
-    
-    deinit {
-        print("Backend de-allocated")
+        listenAmplifyDataStoreEvent()
     }
     
     func listenAmplifyDataStoreEvent() {
@@ -89,14 +85,13 @@ class Backend {
     // load podcast from local store and subscribe to changes
     // this allows to start with an empty store and received sync data as the local store is updated
 //    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
-    //TODO: add error in callback
-    func loadPodcast(for category: Podcast.Category, callback: @escaping ([PodcastData]) -> Void) {
+    func loadPodcast(for category: Podcast.Category, callback: @escaping (Result<[PodcastData],Error>) -> Void) {
 
-        print("====== [BACKEND] LOAD PODCAST")
-
+        print("[BACKEND] LOAD PODCAST")
+        
         // cancel previous subscription if any
         if let s = self.podcastSubscription[category] {
-            print("===== Canceling previous subscription for category \(category)")
+            print("[BACKEND] Canceling previous subscription for category \(category)")
             s.cancel()
         }
 
@@ -118,12 +113,13 @@ class Backend {
                 receiveCompletion: { completion in
                     if case let .failure(error) = completion {
                         print("[Podcast snapshot] Subscription received error - \(error)")
+                        callback(Result.failure(error))
                     }
                     print("[Podcast snapshot] received completion")
                 },
                 receiveValue: { querySnapshot in
                     print("[Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                    callback(querySnapshot.items)
+                    callback(Result.success(querySnapshot.items))
                 })
     }
 
@@ -145,15 +141,14 @@ class Backend {
     
 //    // load episodes from local store and subscribe for updates when backend is updated
 //    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
-    //TODO: add error in callback
-    func loadEpisodes(for podcast: Podcast, callback: @escaping ([EpisodeData]) -> Void) {
+    func loadEpisodes(for podcast: Podcast, callback: @escaping (Result<[EpisodeData],Error>) -> Void) {
 
 
-        print("====== [BACKEND] LOAD EPISODES for podcast \(podcast)")
+        print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
 
         // cancel previous subscription if any
         if let s = self.episodeSubscription[podcast.id] {
-            print("===== Canceling previous EPISODE subscription for podcast \(podcast)")
+            print("[BACKEND] Canceling previous EPISODE subscription for podcast \(podcast)")
             s.cancel()
         }
 
@@ -175,12 +170,13 @@ class Backend {
             receiveCompletion: { completion in
                 if case let .failure(error) = completion {
                     print("[Episode snapshot] Subscription received error - \(error)")
+                    callback(Result.failure(error))
                 }
                 print("[Episode snapshot] received completion")
             },
             receiveValue: { querySnapshot in
                 print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-                callback(querySnapshot.items)
+                callback(Result.success(querySnapshot.items))
             })
     }
     
