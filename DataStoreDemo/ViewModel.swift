@@ -15,8 +15,8 @@ import LoremSwiftum
 final class ViewModel: ObservableObject {
 
     // state of the UI for each category and podcast
-    @Published private(set) var podcastState : [Podcast.Category : State<[Podcast]>] = [:]
-    @Published private(set) var episodeState : [Podcast.ID : State<[Podcast.Episode]>] = [:]
+    @Published var podcastState : [Podcast.Category : State<[Podcast]>] = [:]
+    @Published var episodeState : [Podcast.ID : State<[Podcast.Episode]>] = [:]
     
     private var backend = Backend()
 
@@ -48,7 +48,6 @@ final class ViewModel: ObservableObject {
                     self.podcastState[category] = .error(error)
                 }
             }
-
     }
   
     func loadEpisodes(for podcast: Podcast) async  {
@@ -155,11 +154,5 @@ final class ViewModel: ObservableObject {
         } else {
             print("Can not find list of episodes for podcast id \(p.id)")
         }
-    }
-    
-    static func mock() -> ViewModel {
-        let viewModel = ViewModel()
-        viewModel.podcastState[Podcast.Category.cloud] = .dataAvailable(.mock)
-        return viewModel
     }
 }

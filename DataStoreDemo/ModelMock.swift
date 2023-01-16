@@ -37,3 +37,26 @@ extension Array<Podcast> {
 extension Podcast {
     static var mock : Podcast = [Podcast].mock[0]
 }
+
+extension ViewModel {
+    static var mock : ViewModel = mockedData()
+    
+    fileprivate static func mockedData() -> ViewModel {
+        let vm = ViewModel()
+        
+        // populate podcast for all categories 
+        for c in Podcast.Category.allCases {
+            let podcast = [Podcast].mock.filter({ p in
+                p.category == c
+            })
+            vm.podcastState[c] = .dataAvailable(podcast)
+        }
+        
+        // populate episode data for all podcast
+        for p in [Podcast].mock {
+            vm.episodeState[p.id] = .dataAvailable(p.episodes)
+        }
+        
+        return vm
+    }
+}

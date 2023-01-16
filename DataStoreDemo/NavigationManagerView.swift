@@ -86,12 +86,10 @@ struct NavigationManagerView: View {
 //                try await Backend.shared.importEpisode()
 //            }
 //        }
-        
     }
     
     @ViewBuilder
     func categoryView(for selectedCategory: Binding<Podcast.Category?>) -> some View {
-//        print(self.viewModel.selectedPodcast)
         List(self.viewModel.podcastCategories(), selection: selectedCategory) { item in
             HStack(spacing: 10) {
                 item.icon
@@ -110,7 +108,6 @@ struct NavigationManagerView: View {
     
     @ViewBuilder
     func podcastListView(for podcast: [Podcast], with selectedPodcast: Binding<Podcast?>) -> some View {
-//        print(self.viewModel.selectedCategory)
         VStack {
             List(podcast, selection: selectedPodcast) { podcast in
                 NavigationLink(value: podcast) {
@@ -150,11 +147,9 @@ struct NavigationManagerView: View {
 struct NavigationManagerView_Previews: PreviewProvider {
 
     static var previews: some View {
-        
-        // TODO create a proper ViewModel mock
-        
+                
         // variable podcast is loaded from JSON, just for previews
-        //NavigationManagerView(podcast: viewModel.podcasts)
-        NavigationManagerView().noDataView(with: "Loading podcast episodes")
+        NavigationManagerView().environmentObject(ViewModel.mock)
+//        NavigationManagerView().noDataView(with: "Loading podcast episodes")
     }
 }
