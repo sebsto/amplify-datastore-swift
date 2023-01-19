@@ -27,6 +27,8 @@ import AWSAPIPlugin
  
  */
 class Backend {
+    
+    //MARK: initialization
         
     // declare a cancellable to hold onto the amplify subscription
     private(set) var episodeSubscription: [String:AnyCancellable] = [:]
@@ -76,16 +78,38 @@ class Backend {
         }
     }
     
-    //MARK: Methods called by the GUI
+    //MARK: Methods called by the view model
     
     func podcastCategories() -> [Podcast.Category] {
         return Podcast.Category.allCases
     }
     
+    // async / await version instead of using callbacks, to be called from ViewModel
+    // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
+    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
+        
+        print("[BACKEND] Loading podcast with AsyncThrowingStream")
+        
+        return AsyncThrowingStream { continuation in
+            continuation.onTermination = { @Sendable status in
+                       print("[BACKEND] streaming podcast terminated with status : \(status)")
+            }
+            loadPodcast(for: category) { result in
+                switch(result) {
+                case .success(let data):
+                    print("[BACKEND] streaming podcast success")
+                    continuation.yield(data)
+                case .failure(let error):
+                    print("[BACKEND] streaming podcast failure")
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+    
     // load podcast from local store and subscribe to changes
     // this allows to start with an empty store and received sync data as the local store is updated
-//    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
-    func loadPodcast(for category: Podcast.Category, callback: @MainActor @escaping (Result<[PodcastData],Error>) -> Void) {
+    private func loadPodcast(for category: Podcast.Category, callback: @escaping (Result<[PodcastData],Error>) -> Void) {
 
         print("[BACKEND] LOAD PODCAST")
         
@@ -95,10 +119,6 @@ class Backend {
             s.cancel()
         }
 
-        //TODO:
-        // transform callback-based code to async/await stream
-        // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
-
         // load podcasts and subscribe to changes
         // https://docs.amplify.aws/lib/datastore/real-time/q/platform/ios/#observe-query-results-in-real-time
         let p = PodcastData.keys
@@ -107,27 +127,19 @@ class Backend {
                                            where: p.category == PodcastCategoryData(from: category))
         )
 
-        // this runs on the main thread because it updates the GUI
-//        .receive(on: DispatchQueue.main)
         .sink(
                 receiveCompletion: { completion in
                     if case let .failure(error) = completion {
                         print("[Podcast snapshot] Subscription received error - \(error)")
 
-                        // run on the main thread because it updates the UI
-                        Task {
-                            await callback(Result.failure(error))
-                        }
+                        callback(Result.failure(error))
                     }
                     print("[Podcast snapshot] received completion")
                 },
                 receiveValue: { querySnapshot in
                     print("[Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
 
-                    // run on the main thread because it updates the UI
-                    Task {
-                        await callback(Result.success(querySnapshot.items))
-                    }
+                    callback(Result.success(querySnapshot.items))
                 })
     }
 
@@ -147,10 +159,29 @@ class Backend {
 //                                                     where: e.podcastDataEpisodesId == podcast.id)
 //    }
     
-//    // load episodes from local store and subscribe for updates when backend is updated
-//    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
-    func loadEpisodes(for podcast: Podcast, callback: @MainActor @escaping (Result<[EpisodeData],Error>) -> Void) {
-
+    
+    // async / await version instead of using callbacks, to be called from ViewModel
+    // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
+    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
+        return AsyncThrowingStream { continuation in
+            continuation.onTermination = { @Sendable status in
+                print("[BACKEND] streaming episode terminated with status : \(status)")
+            }
+            loadEpisodes(for: podcast) { result in
+                switch(result) {
+                case .success(let data):
+                    print("[BACKEND] streaming episode success")
+                    continuation.yield(data)
+                case .failure(let error):
+                    print("[BACKEND] streaming episode failure")
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+    
+    // load episodes from local store and subscribe for updates when backend is updated
+    private func loadEpisodes(for podcast: Podcast, callback: @escaping (Result<[EpisodeData],Error>) -> Void) {
 
         print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
 
@@ -159,10 +190,6 @@ class Backend {
             print("[BACKEND] Canceling previous EPISODE subscription for podcast \(podcast)")
             s.cancel()
         }
-
-        //TODO:
-        // transform callback-based code to async/await stream
-        // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
 
         // load episodes
         let e = EpisodeData.keys
@@ -177,20 +204,14 @@ class Backend {
                 if case let .failure(error) = completion {
                     print("[Episode snapshot] Subscription received error - \(error)")
                     
-                    // run on the main thread because it updates the UI
-                    Task {
-                        await callback(Result.failure(error))
-                    }
+                    callback(Result.failure(error))
                 }
                 print("[Episode snapshot] received completion")
             },
             receiveValue: { querySnapshot in
                 print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
 
-                // run on the main thread because it updates the UI
-                Task {
-                    await callback(Result.success(querySnapshot.items))
-                }
+                callback(Result.success(querySnapshot.items))
             })
     }
     

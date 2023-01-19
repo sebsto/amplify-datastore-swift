@@ -33,10 +33,14 @@ struct NavigationManagerView: View {
                     
                     noDataView(with: "No podcast loaded")
 //                        .delayAppearance(bySeconds: viewLoadDelay)
-                        .task {
-                            await viewModel.loadPodcasts(for: category)
+                    
+                        .task() {
+                            // launch a separate Task that will no be cancelled when the view disappears
+                            // this is a long running task that will stream data changes from the backend
+                           Task(priority: .userInitiated) {
+                                await viewModel.loadPodcasts(for: category)
+                            }
                         }
-
                     
                 case .loading:
                     noDataView(with: "Loading podcasts...")
@@ -59,10 +63,14 @@ struct NavigationManagerView: View {
                 case .none,  .noData:
                     noDataView(with: "No episode data")
 //                        .delayAppearance(bySeconds: viewLoadDelay)
-                        .task {
-                            await viewModel.loadEpisodes(for: podcast)
+                        .task() {
+                            // launch a separate Task that will no be cancelled when the view disappears
+                            // this is a long running task that will stream data changes from the backend
+                            Task(priority: .userInitiated) {
+                                await viewModel.loadEpisodes(for: podcast)
+                            }
                         }
-                    
+
                 case .loading:
                     noDataView(with: "Loading episodes...")
 //                        .delayAppearance(bySeconds: viewLoadDelay)

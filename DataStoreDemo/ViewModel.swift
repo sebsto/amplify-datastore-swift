@@ -33,21 +33,36 @@ final class ViewModel: ObservableObject {
             print("Loading podcast for \(category)")
             self.podcastState[category] = .loading
             
-            self.backend.loadPodcast(for: category) { result in
-                switch(result) {
-                case .success(let podcastData):
-                    print("Podcast callback yielded new \(podcastData.count) values")
-                    
-                    var result : [Podcast] = []
-                    // convert backend data to UI data
-                    for pd in podcastData {
-                        result.append(Podcast(from: pd))
-                    }
-                    self.podcastState[category] = .dataAvailable(result)
-                case .failure(let error):
-                    self.podcastState[category] = .error(error)
-                }
+//            self.backend.loadPodcast(for: category) { result in
+//                switch(result) {
+//                case .success(let podcastData):
+//                    print("Podcast callback yielded \(podcastData.count) results")
+//                    let result = self.convertDataToModel(podcastData: podcastData)
+//                    self.podcastState[category] = .dataAvailable(result)
+//                case .failure(let error):
+//                    self.podcastState[category] = .error(error)
+//                }
+//            }
+        
+        do {
+            for try await data in self.backend.loadPodcast(for: category) {
+                print("==== PODCAST LOOP yielded \(data.count) results")
+                let result = convertDataToModel(podcastData :data)
+                self.podcastState[category] = .dataAvailable(result)
             }
+            print("==== EXITED PODCAST LOOP =====")
+        } catch {
+            self.podcastState[category] = .error(error)
+        }
+    }
+    
+    // convert backend data to UI data
+    func convertDataToModel(podcastData : [PodcastData]) -> [Podcast] {
+        var result : [Podcast] = []
+        for pd in podcastData {
+            result.append(Podcast(from: pd))
+        }
+        return result
     }
   
     func loadEpisodes(for podcast: Podcast) async  {
@@ -57,25 +72,39 @@ final class ViewModel: ObservableObject {
         episodeState[podcast.id] = . loading
             
         // load episodes from backend
-        self.backend.loadEpisodes(for: podcast) { result in
-            switch(result) {
-            case .success(let episodeData):
-                print("Episode callback yielded new \(episodeData.count) values")
-                
-                // create an array of Podcast.Episode
-                var result : [Podcast.Episode] = []
-                for e in episodeData {
-                    result.append(Podcast.Episode(from: e))
-                }
-                
-                // refresh the view if the update is for the currently selected podcast
+//        self.backend.loadEpisodes(for: podcast) { result in
+//            switch(result) {
+//            case .success(let data):
+//                print("Episode callback yielded \(data.count) values")
+//                let result = self.convertDataToModel(episodeData: data)
+//                self.episodeState[podcast.id] = .dataAvailable(result)
+//            case .failure(let error):
+//                self.episodeState[podcast.id] = .error(error)
+//
+//            }
+//        }
+        
+        do {
+            for try await data in self.backend.loadEpisodes(for: podcast) {
+                print("==== EPISODE LOOP yielded \(data.count) results")
+                let result = convertDataToModel(episodeData: data)
                 self.episodeState[podcast.id] = .dataAvailable(result)
-            case .failure(let error):
-                self.episodeState[podcast.id] = .error(error)
-                
             }
+            print("==== EXITED EPISODE LOOP =====")
+        } catch {
+            self.episodeState[podcast.id] = .error(error)
         }
     }
+    
+    // create an array of Podcast.Episode
+    func convertDataToModel(episodeData: [EpisodeData]) -> [Podcast.Episode] {
+        var result : [Podcast.Episode] = []
+        for e in episodeData {
+            result.append(Podcast.Episode(from: e))
+        }
+        return result
+    }
+
     
     func podcastCategories() -> [Podcast.Category] {
         return Podcast.Category.allCases
