@@ -16,8 +16,8 @@ extension MainView {
     final class ViewModel: ObservableObject {
         
         // state of the UI for each category and podcast
-        @Published var podcastState : [Podcast.Category : State<[Podcast]>] = [:]
-        @Published var episodeState : [Podcast.ID : State<[Podcast.Episode]>] = [:]
+        @Published private(set) var podcastState : [Podcast.Category : State<[Podcast]>] = [:]
+        @Published private(set) var episodeState : [Podcast.ID : State<[Podcast.Episode]>] = [:]
         
         private var backend = Backend()
         
@@ -188,5 +188,28 @@ extension MainView {
                 print("Can not find list of episodes for podcast id \(p.id)")
             }
         }
+    }
+}
+
+extension MainView.ViewModel {
+    static var mock : MainView.ViewModel = mockedData()
+    
+    private static func mockedData() -> MainView.ViewModel {
+        let vm = MainView.ViewModel()
+        
+        // populate podcast for all categories
+        for c in Podcast.Category.allCases {
+            let podcast = [Podcast].mock.filter({ p in
+                p.category == c
+            })
+            vm.podcastState[c] = .dataAvailable(podcast)
+        }
+        
+        // populate episode data for all podcast
+        for p in [Podcast].mock {
+            vm.episodeState[p.id] = .dataAvailable(p.episodes)
+        }
+        
+        return vm
     }
 }
