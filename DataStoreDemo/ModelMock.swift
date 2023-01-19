@@ -38,11 +38,11 @@ extension Podcast {
     static var mock : Podcast = [Podcast].mock[0]
 }
 
-extension ViewModel {
-    static var mock : ViewModel = mockedData()
+extension MainView.ViewModel {
+    static var mock : MainView.ViewModel = mockedData()
     
-    fileprivate static func mockedData() -> ViewModel {
-        let vm = ViewModel()
+    fileprivate static func mockedData() -> MainView.ViewModel {
+        let vm = MainView.ViewModel()
         
         // populate podcast for all categories 
         for c in Podcast.Category.allCases {

@@ -12,8 +12,7 @@ struct DataStoreDemoApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            NavigationManagerView().environmentObject(Backend.shared.userData)
-            NavigationManagerView().environmentObject(ViewModel())
+            MainView().environmentObject(MainView.ViewModel())
         }
     }
 }

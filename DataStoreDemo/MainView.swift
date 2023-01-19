@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-struct NavigationManagerView: View {
+struct MainView: View {
     
     private let viewLoadDelay = 1.0
     
@@ -157,7 +157,7 @@ struct NavigationManagerView_Previews: PreviewProvider {
     static var previews: some View {
                 
         // variable podcast is loaded from JSON, just for previews
-        NavigationManagerView().environmentObject(ViewModel.mock)
-//        NavigationManagerView().noDataView(with: "Loading podcast episodes")
+        MainView().environmentObject(MainView.ViewModel.mock)
+//        MainView().noDataView(with: "Loading podcast episodes")
     }
 }

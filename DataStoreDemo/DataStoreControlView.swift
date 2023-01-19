@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DataStoreControlView: View {
     
-    @EnvironmentObject private var viewModel: ViewModel
+    @EnvironmentObject private var viewModel: MainView.ViewModel
     var selectedPodcast : Podcast?
     
     var body: some View {
@@ -64,6 +64,6 @@ struct DataStoreControlView_Previews: PreviewProvider {
     
     static var previews: some View {
         DataStoreControlView(selectedPodcast: .mock)
-            .environmentObject(ViewModel())
+            .environmentObject(MainView.ViewModel())
     }
 }
