@@ -34,6 +34,7 @@ extension MainView {
             print("Loading podcast for \(category)")
             self.podcastState[category] = .loading
             
+            //            // the callback version
             //            self.backend.loadPodcast(for: category) { result in
             //                switch(result) {
             //                case .success(let podcastData):
@@ -44,7 +45,8 @@ extension MainView {
             //                    self.podcastState[category] = .error(error)
             //                }
             //            }
-            
+
+            // the asyncstream version
             do {
                 for try await data in self.backend.loadPodcast(for: category) {
                     print("==== PODCAST LOOP yielded \(data.count) results")
@@ -72,7 +74,7 @@ extension MainView {
             
             episodeState[podcast.id] = . loading
             
-            // load episodes from backend
+            //         // the callback version
             //        self.backend.loadEpisodes(for: podcast) { result in
             //            switch(result) {
             //            case .success(let data):
@@ -85,6 +87,7 @@ extension MainView {
             //            }
             //        }
             
+            // the AsyncStream version
             do {
                 for try await data in self.backend.loadEpisodes(for: podcast) {
                     print("==== EPISODE LOOP yielded \(data.count) results")
