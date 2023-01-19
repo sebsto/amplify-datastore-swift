@@ -13,8 +13,6 @@ struct MainView: View {
     private let viewLoadDelay = 1.0
     
     @State private var sideBarVisibility: NavigationSplitViewVisibility = .automatic
-    @State private var selectedPodcast : Podcast? = nil
-    @State private var selectedCategory : Podcast.Category? = .cloud
     
     @EnvironmentObject private var viewModel: ViewModel
     
@@ -23,11 +21,11 @@ struct MainView: View {
         
         sidebar: {
             
-            categoryView(for: $selectedCategory)
+            categoryView(for: $viewModel.selectedCategory)
             
         }, content: {
 
-            if let category = selectedCategory {
+            if let category = viewModel.selectedCategory {
                 switch(viewModel.podcastState[category]) {
                 case .none, .noData:
                     
@@ -47,7 +45,7 @@ struct MainView: View {
 //                        .delayAppearance(bySeconds: viewLoadDelay)
 
                 case .dataAvailable(let podcasts):
-                    podcastListView(for: podcasts, with: $selectedPodcast)
+                    podcastListView(for: podcasts, with: $viewModel.selectedPodcast)
                     
                 case .error(let error):
                     Text("There was an error: \(error.localizedDescription)")
@@ -58,7 +56,7 @@ struct MainView: View {
 
         }, detail: {
             
-            if let podcast = selectedPodcast {
+            if let podcast = viewModel.selectedPodcast {
                 switch(viewModel.episodeState[podcast.id]) {
                 case .none,  .noData:
                     noDataView(with: "No episode data")
@@ -76,7 +74,7 @@ struct MainView: View {
 //                        .delayAppearance(bySeconds: viewLoadDelay)
 
                 case .dataAvailable(let episodes):
-                    episodeListView(with: episodes, for: selectedPodcast)
+                    episodeListView(with: episodes, for: viewModel.selectedPodcast)
                     
                 case .error(let error):
                     Text("There was an error: \(error.localizedDescription)")

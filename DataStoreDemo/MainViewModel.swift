@@ -15,10 +15,13 @@ extension MainView {
     @MainActor
     final class ViewModel: ObservableObject {
         
+        
         // state of the UI for each category and podcast
         @Published private(set) var podcastState : [Podcast.Category : State<[Podcast]>] = [:]
         @Published private(set) var episodeState : [Podcast.ID : State<[Podcast.Episode]>] = [:]
-        
+        @Published var selectedPodcast : Podcast? = nil
+        @Published var selectedCategory : Podcast.Category? = .cloud
+
         private var backend = Backend()
         
         enum State<T> {
