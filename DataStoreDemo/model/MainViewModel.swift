@@ -5,7 +5,6 @@
 //  Created by Stormacq, Sebastien on 06/11/2022.
 //
 
-//import Combine
 import SwiftUI
 
 // to generate random text when creating episodes
@@ -32,7 +31,7 @@ extension MainView {
         }
         
         func loadPodcasts(for category: Podcast.Category) async {
-            
+                        
             // when we did not load podcast for this category yet
             print("Loading podcast for \(category)")
             self.podcastState[category] = .loading

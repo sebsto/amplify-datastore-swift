@@ -28,6 +28,11 @@ import AWSAPIPlugin
  */
 class Backend {
     
+    // we need to keep a reference to the subscription streams, otherwise the language runtime
+    // release the objects.
+    var podcastSubscriptions: [Podcast.Category:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>>] = [:]
+    var episodeSubscriptions: [Podcast:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>>] = [:]
+
     //MARK: initialization
             
     init() {
@@ -38,7 +43,7 @@ class Backend {
             try Amplify.add(plugin: dataStorePlugin)
             try Amplify.add(plugin: AWSAPIPlugin())
             try Amplify.configure()
-//            Amplify.Logging.logLevel = .verbose
+            Amplify.Logging.logLevel = .verbose
             print("Amplify configured with DataStore plugin")
             
         } catch {
@@ -84,24 +89,33 @@ class Backend {
     // this allows to start with an empty store and received sync data as the local store is updated
     func loadPodcast(for category: Podcast.Category) -> AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>> {
         
-        print("[BACKEND] Loading podcast with AsyncThrowingStream")
-        
-        let p = PodcastData.keys
-        return Amplify.DataStore
-                      .observeQuery(for: PodcastData.self,
-                                    where: p.category == PodcastCategoryData(from: category))
+        if !podcastSubscriptions.keys.contains(category) {
+            print("[BACKEND] Loading podcast with AsyncThrowingStream")
+            let p = PodcastData.keys
+            podcastSubscriptions[category] =
+                    Amplify.DataStore
+                           .observeQuery(for: PodcastData.self,
+                                         where: p.category == PodcastCategoryData(from: category))
+        }
 
+        return podcastSubscriptions[category]!
     }
     
     func loadEpisodes(for podcast: Podcast) -> AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>> {
-        print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
         
-        // load episodes
-        let e = EpisodeData.keys
-
-        return Amplify.DataStore
-                      .observeQuery(for: EpisodeData.self,
-                                    where: e.podcastDataEpisodesId == podcast.id)
+        if !episodeSubscriptions.keys.contains(podcast) {
+            
+            print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
+            
+            // load episodes
+            let e = EpisodeData.keys
+            
+            episodeSubscriptions[podcast] = Amplify.DataStore
+                .observeQuery(for: EpisodeData.self,
+                              where: e.podcastDataEpisodesId == podcast.id)
+        }
+        
+        return episodeSubscriptions[podcast]!
 
     }
     
