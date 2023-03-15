@@ -30,8 +30,8 @@ class Backend {
     
     // we need to keep a reference to the subscription streams, otherwise the language runtime
     // release the objects.
-    var podcastSubscriptions: [Podcast.Category:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>>] = [:]
-    var episodeSubscriptions: [Podcast:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>>] = [:]
+    private var podcastSubscriptions: [Podcast.Category:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>>] = [:]
+    private var episodeSubscriptions: [Podcast:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>>] = [:]
 
     //MARK: initialization
             
@@ -43,7 +43,7 @@ class Backend {
             try Amplify.add(plugin: dataStorePlugin)
             try Amplify.add(plugin: AWSAPIPlugin())
             try Amplify.configure()
-            Amplify.Logging.logLevel = .verbose
+//            Amplify.Logging.logLevel = .verbose
             print("Amplify configured with DataStore plugin")
             
         } catch {
@@ -96,7 +96,7 @@ class Backend {
                     Amplify.DataStore
                            .observeQuery(for: PodcastData.self,
                                          where: p.category == PodcastCategoryData(from: category))
-        }
+        } 
 
         return podcastSubscriptions[category]!
     }
