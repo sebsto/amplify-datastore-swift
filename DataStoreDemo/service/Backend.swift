@@ -28,12 +28,13 @@ import AWSAPIPlugin
  */
 class Backend {
     
+    // we need to keep a reference to the subscription streams, otherwise the language runtime
+    // release the objects.
+    private var podcastSubscriptions: [Podcast.Category:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>>] = [:]
+    private var episodeSubscriptions: [Podcast:AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>>] = [:]
+
     //MARK: initialization
-        
-    // declare a cancellable to hold onto the amplify subscription
-    private(set) var episodeSubscription: [String:AnyCancellable] = [:]
-    private(set) var podcastSubscription: [Podcast.Category:AnyCancellable] = [:]
-    
+            
     init() {
         do {
             
@@ -84,135 +85,38 @@ class Backend {
         return Podcast.Category.allCases
     }
     
-    // async / await version instead of using callbacks, to be called from ViewModel
-    // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
-    func loadPodcast(for category: Podcast.Category) -> AsyncThrowingStream<[PodcastData], Error> {
-        
-        print("[BACKEND] Loading podcast with AsyncThrowingStream")
-        
-        return AsyncThrowingStream { continuation in
-            continuation.onTermination = { @Sendable status in
-                       print("[BACKEND] streaming podcast terminated with status : \(status)")
-            }
-            loadPodcast(for: category) { result in
-                switch(result) {
-                case .success(let data):
-                    print("[BACKEND] streaming podcast success")
-                    continuation.yield(data)
-                case .failure(let error):
-                    print("[BACKEND] streaming podcast failure")
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
-    }
-    
     // load podcast from local store and subscribe to changes
     // this allows to start with an empty store and received sync data as the local store is updated
-    private func loadPodcast(for category: Podcast.Category, callback: @escaping (Result<[PodcastData],Error>) -> Void) {
-
-        print("[BACKEND] LOAD PODCAST")
+    func loadPodcast(for category: Podcast.Category) -> AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<PodcastData>> {
         
-        // cancel previous subscription if any
-        if let s = self.podcastSubscription[category] {
-            print("[BACKEND] Canceling previous subscription for category \(category)")
-            s.cancel()
-        }
+        if !podcastSubscriptions.keys.contains(category) {
+            print("[BACKEND] Loading podcast with AsyncThrowingStream")
+            let p = PodcastData.keys
+            podcastSubscriptions[category] =
+                    Amplify.DataStore
+                           .observeQuery(for: PodcastData.self,
+                                         where: p.category == PodcastCategoryData(from: category))
+        } 
 
-        // load podcasts and subscribe to changes
-        // https://docs.amplify.aws/lib/datastore/real-time/q/platform/ios/#observe-query-results-in-real-time
-        let p = PodcastData.keys
-        self.podcastSubscription[category] = Amplify.Publisher.create(
-            Amplify.DataStore.observeQuery(for: PodcastData.self,
-                                           where: p.category == PodcastCategoryData(from: category))
-        )
-
-        .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        print("[Podcast snapshot] Subscription received error - \(error)")
-
-                        callback(Result.failure(error))
-                    }
-                    print("[Podcast snapshot] received completion")
-                },
-                receiveValue: { querySnapshot in
-                    print("[Podcast snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-
-                    callback(Result.success(querySnapshot.items))
-                })
-    }
-
-//    func loadPodcast(for category: Podcast.Category) async throws -> [PodcastData] {
-//
-//            // load podcasts
-//            let p = PodcastData.keys
-//            return try await Amplify.DataStore.query(PodcastData.self,
-//                                              where: p.category == PodcastCategoryData(from: category))
-//    }
-//
-//    func loadEpisodes(for podcast: Podcast) async throws -> [EpisodeData] {
-//
-//            // load podcasts
-//            let e = EpisodeData.keys
-//            return try await Amplify.DataStore.query(EpisodeData.self,
-//                                                     where: e.podcastDataEpisodesId == podcast.id)
-//    }
-    
-    
-    // async / await version instead of using callbacks, to be called from ViewModel
-    // https://www.avanderlee.com/swift/asyncthrowingstream-asyncstream/
-    func loadEpisodes(for podcast: Podcast) -> AsyncThrowingStream<[EpisodeData], Error> {
-        return AsyncThrowingStream { continuation in
-            continuation.onTermination = { @Sendable status in
-                print("[BACKEND] streaming episode terminated with status : \(status)")
-            }
-            loadEpisodes(for: podcast) { result in
-                switch(result) {
-                case .success(let data):
-                    print("[BACKEND] streaming episode success")
-                    continuation.yield(data)
-                case .failure(let error):
-                    print("[BACKEND] streaming episode failure")
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
+        return podcastSubscriptions[category]!
     }
     
-    // load episodes from local store and subscribe for updates when backend is updated
-    private func loadEpisodes(for podcast: Podcast, callback: @escaping (Result<[EpisodeData],Error>) -> Void) {
-
-        print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
-
-        // cancel previous subscription if any
-        if let s = self.episodeSubscription[podcast.id] {
-            print("[BACKEND] Canceling previous EPISODE subscription for podcast \(podcast)")
-            s.cancel()
+    func loadEpisodes(for podcast: Podcast) -> AmplifyAsyncThrowingSequence<DataStoreQuerySnapshot<EpisodeData>> {
+        
+        if !episodeSubscriptions.keys.contains(podcast) {
+            
+            print("[BACKEND] LOAD EPISODES for podcast \(podcast.id)")
+            
+            // load episodes
+            let e = EpisodeData.keys
+            
+            episodeSubscriptions[podcast] = Amplify.DataStore
+                .observeQuery(for: EpisodeData.self,
+                              where: e.podcastDataEpisodesId == podcast.id)
         }
+        
+        return episodeSubscriptions[podcast]!
 
-        // load episodes
-        let e = EpisodeData.keys
-
-        self.episodeSubscription[podcast.id] = Amplify.Publisher.create(
-            Amplify.DataStore.observeQuery(for: EpisodeData.self,
-                                           where: e.podcastDataEpisodesId == podcast.id)
-        )
-
-        .sink(
-            receiveCompletion: { completion in
-                if case let .failure(error) = completion {
-                    print("[Episode snapshot] Subscription received error - \(error)")
-                    
-                    callback(Result.failure(error))
-                }
-                print("[Episode snapshot] received completion")
-            },
-            receiveValue: { querySnapshot in
-                print("[Episode snapshot] item count: \(querySnapshot.items.count), isSynced: \(querySnapshot.isSynced)")
-
-                callback(Result.success(querySnapshot.items))
-            })
     }
     
     func addEpisode(_ episode: EpisodeData) async throws  {

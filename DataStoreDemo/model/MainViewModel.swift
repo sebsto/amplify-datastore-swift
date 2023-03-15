@@ -5,7 +5,6 @@
 //  Created by Stormacq, Sebastien on 06/11/2022.
 //
 
-//import Combine
 import SwiftUI
 
 // to generate random text when creating episodes
@@ -32,32 +31,23 @@ extension MainView {
         }
         
         func loadPodcasts(for category: Podcast.Category) async {
-            
+                        
             // when we did not load podcast for this category yet
             print("Loading podcast for \(category)")
             self.podcastState[category] = .loading
-            
-            //            // the callback version
-            //            self.backend.loadPodcast(for: category) { result in
-            //                switch(result) {
-            //                case .success(let podcastData):
-            //                    print("Podcast callback yielded \(podcastData.count) results")
-            //                    let result = self.convertDataToModel(podcastData: podcastData)
-            //                    self.podcastState[category] = .dataAvailable(result)
-            //                case .failure(let error):
-            //                    self.podcastState[category] = .error(error)
-            //                }
-            //            }
 
-            // the asyncstream version
+            // using an asyncstream
             do {
-                for try await data in self.backend.loadPodcast(for: category) {
+                print("==== ENTERING PODCAST LOOP =====")
+                for try await snapshot in self.backend.loadPodcast(for: category) {
+                    let data = snapshot.items
                     print("==== PODCAST LOOP yielded \(data.count) results")
                     let result = convertDataToModel(podcastData :data)
                     self.podcastState[category] = .dataAvailable(result)
                 }
                 print("==== EXITED PODCAST LOOP =====")
             } catch {
+                print("==== ERROR DURING PODCAST LOOP =====")
                 self.podcastState[category] = .error(error)
             }
         }
@@ -77,22 +67,10 @@ extension MainView {
             
             episodeState[podcast.id] = . loading
             
-            //         // the callback version
-            //        self.backend.loadEpisodes(for: podcast) { result in
-            //            switch(result) {
-            //            case .success(let data):
-            //                print("Episode callback yielded \(data.count) values")
-            //                let result = self.convertDataToModel(episodeData: data)
-            //                self.episodeState[podcast.id] = .dataAvailable(result)
-            //            case .failure(let error):
-            //                self.episodeState[podcast.id] = .error(error)
-            //
-            //            }
-            //        }
-            
-            // the AsyncStream version
+            // using an AsyncStream
             do {
-                for try await data in self.backend.loadEpisodes(for: podcast) {
+                for try await snapshot in self.backend.loadEpisodes(for: podcast) {
+                    let data = snapshot.items
                     print("==== EPISODE LOOP yielded \(data.count) results")
                     let result = convertDataToModel(episodeData: data)
                     self.episodeState[podcast.id] = .dataAvailable(result)
