@@ -155,6 +155,17 @@ class Backend {
         try await Amplify.DataStore.clear()
     }
     
+    func cancelSubscriptions() {
+        self.episodeSubscriptions.forEach { key,value in
+            value.cancel()
+        }
+        self.episodeSubscriptions = [:]
+        self.podcastSubscriptions.forEach { key,value in
+            value.cancel()
+        }
+        self.podcastSubscriptions = [:]
+    }
+    
     //MARK:  Methods not used
     // used once to import data to the datastore and backend
     func importPodcast() async throws {

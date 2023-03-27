@@ -97,6 +97,7 @@ extension MainView {
         
         func reload() {
             print("Reload from datastore")
+            self.backend.cancelSubscriptions()
             self.episodeState = [:]
             self.podcastState = [:]
         }
